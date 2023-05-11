@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Experts</title>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://chat.openai.com/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://chat.openai.com/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="https://chat.openai.com/favicon-16x16.png"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@1,300&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/dae90bcda1.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .chat-container {
+        overflow: hidden;
+      }
+      .chat-box {
+        height: 100vh;
+        overflow-y: scroll;
+        background-color: #f7f7f7;
+      }
+      .chat-box p {
+        margin: 0;
+      }
+      .chat-messages {
+        padding: 10px;
+      }
+      .chat-input {
+        position: fixed;
+        bottom: 0;
+        width: 100vw;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: 10px;
+        background-color: #fff;
+      }
+      .chat-input-container {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .chat-input-textarea {
+        flex-grow: 1;
+        min-height: 60px;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        resize: none;
+      }
+      .chat-input-textarea:focus {
+        border-color: darkgrey;
+      }
+      .tab {
+        display: flex;
+        padding-top: 10px;
+        width: 100vw;
+        position: sticky;
+        padding-right: 10px;
+        background-color: white;
+        overflow-x: auto; /* 追加 */
+        overflow-y: hidden; /* 縦方向のスクロールを無効化 */
+        white-space: nowrap; /* テキストの折り返しを無効化 */
+      }
+      .tablinks {
+        clip-path: polygon(0 0, 90% 0, 100% 100%, 0 100%);
+        border-radius: 5px 0 0 0;
+        background-color: inherit;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 45px 10px 40px;
+        transition: background-color 0.3s ease;
+        background-color: #ddd;
+        line-height: 20px;
+      }
+      .plus-button {
+        clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+        border-radius: 15px 15px 0 0;
+        background-color: inherit;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 25px 10px 20px;
+        transition: background-color 0.3s ease;
+        background-color: #ddd;
+        line-height: 20px;
+      }
+      .tab button:hover {
+        background-color: #ccc;
+      }
+      .tab button.active {
+        background-color: #eeeeee;
+      }
+      .tab-content {
+        display: none;
+        padding: 10px;
+      }
+      .chat-input-button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .message {
+        display: flex;
+        margin-bottom: 10px;
+        /* align-items: center; */
+      }
+      .content {
+        display: flex;
+        /* align-items: center; */
+        gap: 10px; /* 必要に応じて間隔を調整 */
+      }
+      .button-example {
+        background-color: #ffffff;
+        border: 1px solid rgb(209, 213, 219);
+        border-radius: 0.5rem;
+        color: #111827;
+        font-family: ui-sans-serif, system-ui, -apple-system, system-ui,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+          "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+          "Noto Color Emoji";
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.25rem;
+        padding: 0.75rem 1rem;
+        text-align: center;
+        -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+      }
+
+      .button-example:hover {
+        background-color: #f9fafb;
+      }
+      .mes {
+        font-size: 25px;
+        line-height: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-box" id="chat-box">
+        <div class="tab">
+          <div>
+            <h1
+              style="
+                margin: 0 20px 0 20px;
+                font-family: 'Ubuntu', sans-serif;
+              "
+            >
+              Experts
+            </h1>
+          </div>
+          <button class="tablinks active" onclick="openTab(event, 'asLawyer')">
+            弁護士
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'asTaxAccountant')">
+            弁理士
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'asPhysician')">
+            医師
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'asConsultant')">
+            コンサルタント
+          </button>
+          <button
+            class="tablinks"
+            onclick="openTab(event, 'asFinancialadvisor')"
+          >
+            金融アドバイザー
+          </button>
+          <button
+            class="tablinks"
+            onclick="openTab(event, 'asPsychotherapist')"
+          >
+            心理カウンセラー
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'asNutritionist')">
+            栄養士／ダイエットコンサルタント
+          </button>
+          <button class="tablinks plus-button">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+      </div>
+      <div class="chat-input">
+        <div style="margin-bottom: 10px">
+          <button class="button-example" onclick="giveExample()">
+            例えば...
+          </button>
+        </div>
+        <div class="chat-input-container">
+          <textarea
+            class="chat-input-textarea"
+            id="message-input"
+            placeholder="Type your message..."
+          ></textarea>
+          <button class="chat-input-button" id="send-button">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <script>
+      var nowTab = "asLawyer";
+      var conversations = {
+        asLawyer: [],
+        asTaxAccountant: [],
+        asPhysician: [],
+        asConsultant: [],
+        asFinancialadvisor: [],
+        asPsychotherapist: [],
+        asNutritionist: [],
+      };
+      function openTab(evt, tabName) {
+        const tabContents = document.getElementsByClassName("tablinks");
+        for (let i = 0; i < tabContents.length; i++) {
+          tabContents[i].className = tabContents[i].className.replace(
+            " active",
+            ""
+          );
+        }
+        evt.currentTarget.className += " active";
+        nowTab = tabName;
+        depictMessages();
+      }
+      const imageBlocks = {
+        user: `<div class="icon-container"><i class="icon fa-solid fa-user fa-2x" style="text-align:center;width:40px;"></i></div>`,
+        asLawyer: `<div class="con-container"><img class="icon" src="/static/asLawyer.png" style="border-radius:10px;height:40px;width:40px;object-fit:cover;"></div>`,
+        asTaxAccountant: `<div clas="icon-container"><img class="icon" src="/static/asTaxAccountant.png" style="border-radius:10px;height:40px;width:40px;object-fit:cover;"></div>`,
+        asPhysician: `<div class="icon-conainer"><img class="icon" src="/static/asPhysician.png" style="border-radius:10px;height:40px;width:40px;object-fit:cover;"></div>`,
+        asConsultant: `<div class="ico-container"><img class="icon" src="/static/asConsultant.png" style="border-radius:10px;height:40px;width:40px;object-fit:cover;"></div>`,
+        asFinancialadvisor: `<div class"icon-container"><img class="icon" src="/static/asFinancialadvisor.png" style="border-radius:10px;height:40px;width:40px;object-fit:cover;"></div>`,
+        asNutritionist: `<div class="icon-conainer"><img class="icon" src="/static/asNutritionist.png" style="border-radius:10px;height:40px;width:40px;object-fit:cover;"></div>`,
+      };
+      const examples = {
+        asLawyer: `逮捕というのは、どういう状態のことを言うのでしょうか。`,
+        asTaxAccountant: `著作権違反とは、どのような場合に発生するものなのでしょうか。`,
+        asPhysician: `かっけというのは、どのような病気なのでしょうか。`,
+        asConsultant: `Saasに適したマーケティング手法を挙げてください。`,
+        asFinancialadvisor: `長期投資と短期投資はリスクについてどのような違いがありますか。`,
+        asNutritionist: `３食バランスよく摂るために特に気をつけることはなんでしょう。`,
+      };
+      function depictMessages() {
+        const chatMessages = document.getElementById("chat-messages");
+        while (chatMessages.firstChild) {
+          chatMessages.removeChild(chatMessages.firstChild);
+        }
+        for (let i = 0; i < conversations[nowTab].length; i++) {
+          const messageElement = document.createElement("div");
+          messageElement.classList.add("message"); // 追加: メッセージ要素にクラスを追加
+          const [key, value] = Object.entries(conversations[nowTab][i])[0];
+          const contentElement = document.createElement("div");
+          contentElement.classList.add("content"); // 追加: コンテンツ要素にクラスを追加
+          contentElement.innerHTML = `${imageBlocks[key]}<p class="mes">${value}</p>`;
+          messageElement.appendChild(contentElement);
+          chatMessages.appendChild(messageElement);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }
+      // function depictMessages() {
+      //   const chatMessages = document.getElementById("chat-messages");
+      //   while (chatMessages.firstChild) {
+      //     chatMessages.removeChild(chatMessages.firstChild);
+      //   }
+      //   for (let i = 0; i < conversations[nowTab].length; i++) {
+      //     const messageElement = document.createElement("p");
+      //     const [key, value] = Object.entries(conversations[nowTab][i])[0];
+      //     messageElement.textContent = `${key}: ${value}`;
+      //     chatMessages.appendChild(messageElement);
+      //     chatMessages.scrollTop = chatMessages.scrollHeight;
+      //   }
+      // }
+      function giveExample() {
+        const messageInput = document.getElementById("message-input");
+        messageInput.value = examples[nowTab];
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        const messageInput = document.getElementById("message-input");
+        const sendButton = document.getElementById("send-button");
+        const chatMessages = document.getElementById("chat-messages");
+        sendButton.addEventListener("click", function () {
+          sendMessage();
+        });
+        messageInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+            sendMessage();
+          }
+        });
+        async function postMessage(message) {
+          const formData = new FormData();
+          formData.append("message", message);
+          const response = await fetch("/send-message", {
+            method: "POST",
+            body: formData,
+          });
+          return response.json();
+        }
+        async function sendMessage() {
+          const message = messageInput.value.trim();
+          if (message !== "") {
+            appendMessage("user", message);
+            messageInput.value = "";
+            const response = await postMessage(message); // この行を変更
+            returnMessage = response[response.length - 1]["content"];
+            appendMessage(nowTab, returnMessage);
+            console.log(`Server response: ${returnMessage}`);
+          }
+        }
+        function appendMessage(sender, content) {
+          if (sender != "user") {
+            var instant_dictionary = {};
+            instant_dictionary[nowTab] = content;
+            conversations[nowTab].push(instant_dictionary);
+          } else {
+            conversations[nowTab].push({ user: content });
+          }
+          depictMessages();
+        }
+      });
+    </script>
+  </body>
+</html>
